@@ -33,6 +33,7 @@ export type Category =
 export type DataItem = {
     title: string;
     description?: string | null;
+    description_detail?: string;
     pubDate?: number | string | Date | null;
     link?: string;
     category?: string[] | string;

@@ -65,6 +65,13 @@ const getVideoInfo = (videoId: string) =>
         // The expiration is not renewed on a hit, so an edited description still shows up in a steadily polled feed
         false
     );
+const getVideoInfoOrUndefined = async (videoId: string) => {
+    try {
+        return await getVideoInfo(videoId);
+    } catch {
+        return;
+    }
+};
 const lockupViewToItem = (video: VideoLockupView, embed: boolean, description = ''): DataItem => {
     const videoId = video.content_id;
     const img = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
@@ -101,14 +108,18 @@ export const getDataByChannelId = async ({ channelId, embed, filterShorts, isJso
     const channel = await innertube.getChannel(channelId);
     const videos = filterShorts ? await channel.getVideos() : await innertube.getPlaylist(`UU${channelId.slice(2)}`);
     const lockupVideos = videos.videos.filter((video) => isVideoLockup(video));
+    const videoInfos = await Promise.all(lockupVideos.map((video) => getVideoInfoOrUndefined(video.content_id)));
     const videoSubtitles = isJsonFeed ? await getSrtAttachmentBatch(lockupVideos.map((video) => video.content_id)) : {};
     return {
         title: `${channel.metadata.title || channelId} - YouTube`,
         link: `https://www.youtube.com/channel/${channelId}`,
         image: channel.metadata.avatar?.[0].url,
         description: channel.metadata.description,
-        item: lockupVideos.map((video) => {
-            const item = lockupViewToItem(video, embed);
+        item: lockupVideos.map((video, index) => {
+            const item = {
+                ...lockupViewToItem(video, embed),
+                description_detail: videoInfos[index]?.description,
+            };
             item.attachments?.push(...(isJsonFeed ? videoSubtitles[video.content_id] || [] : []));
             return item;
         }),

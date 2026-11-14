@@ -63,6 +63,7 @@ const RSS: FC<{ data: Data }> = ({ data }) => {
                                 const Tag = `media:${key}`;
                                 return <Tag {...value} />;
                             })}
+                        {item.description_detail && <description_detail>{item.description_detail}</description_detail>}
                     </item>
                 ))}
             </channel>

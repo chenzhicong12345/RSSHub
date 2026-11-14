@@ -157,6 +157,7 @@ export const getDataByUsername = async ({ username, embed, filterShorts, isJsonF
                 return {
                     title: snippet.title,
                     description: renderYoutube(embed, videoId, img, formatDescription(snippet.description)),
+                    description_detail: snippet.description,
                     pubDate: parseDate(snippet.publishedAt),
                     link: `https://www.youtube.com/watch?v=${videoId}`,
                     author: snippet.videoOwnerChannelTitle,
@@ -202,6 +203,7 @@ export const getDataByChannelId = async ({ channelId, embed, filterShorts, isJso
                 return {
                     title: snippet.title,
                     description: renderYoutube(embed, videoId, img, formatDescription(snippet.description)),
+                    description_detail: snippet.description,
                     pubDate: parseDate(snippet.publishedAt),
                     link: `https://www.youtube.com/watch?v=${videoId}`,
                     author: snippet.videoOwnerChannelTitle,
